@@ -317,6 +317,74 @@ end
 --
 --
 
+minetest.register_chatcommand('tp', {
+	params = '<position/player>',
+	description = 'shortcut for /teleport',
+	func = safe(function(param)
+		       safe(minetest.run_server_chatcommand('teleport',param ))
+		    end),
+     }
+  )
+
+minetest.register_chatcommand('tp_to', {
+	params = '<waypoint>',
+	description = 'teleport to a waypoint',
+	func = safe(function(param)
+		       safe(teleport_to(param))
+		    end),
+     }
+  )
+
+minetest.register_chatcommand('tp_push', {
+	params = '<waypoint>',
+	description = 'teleport to a waypoint and save old position',
+	func = safe(function(param)
+		       stack_push()
+		       safe(teleport_to(param))
+		    end),
+     }
+  )
+
+minetest.register_chatcommand('tp_pop', {
+	params = '',
+	description = 'return to the last saved position',
+	func = stack_pop,
+     }
+  )
+
+minetest.register_chatcommand('tp_use', {
+	params = '',
+	description = "use the last saved position but don't remove it",
+	func = stack_use,
+     }
+  )
+
+minetest.register_chatcommand('tp_shift', {
+	params = '<axis> <distance>',
+	description = '"shift" the player along the given axis and add the given number',
+	func = position_shift2,
+     }
+  )
+
+
+minetest.register_chatcommand('wp_list', {
+    params = '',
+    description = 'lists waypoints',
+    func = safe(function(_)
+        for name, point in pairsByKeys(waypoints, lc_cmp) do
+            minetest.display_chat_message(msg_prefix..
+                ('%s -> %s'):format(name, tostring_point(point))
+            )
+        end
+    end),
+})
+
+minetest.register_chatcommand('wp_show', {
+	params = '<waypoint>',
+	description = 'show the coordinates of a given waypoint',
+	func = show_pos,
+     }
+  )
 
 minetest.register_chatcommand('wp_set', {
     params = '<name>',
@@ -333,7 +401,6 @@ minetest.register_chatcommand('wp_set', {
     end),
 })
 
-
 minetest.register_chatcommand('wp_unset', {
     params = '<name>',
     description = 'remove a waypoint',
@@ -349,120 +416,6 @@ minetest.register_chatcommand('wp_unset', {
 })
 
 
-minetest.register_chatcommand('wp_list', {
-    params = '',
-    description = 'lists waypoints',
-    func = safe(function(_)
-        for name, point in pairsByKeys(waypoints, lc_cmp) do
-            minetest.display_chat_message(msg_prefix..
-                ('%s -> %s'):format(name, tostring_point(point))
-            )
-        end
-    end),
-})
-
-
-minetest.register_chatcommand('tp_to', {
-	params = '<waypoint>',
-	description = 'teleport to a waypoint',
-	func = safe(function(param)
-		       safe(teleport_to(param))
-		    end),
-     }
-  )
-
-
-minetest.register_chatcommand('tp_push', {
-	params = '<waypoint>',
-	description = 'teleport to a waypoint and save old position',
-	func = safe(function(param)
-		       stack_push()
-		       safe(teleport_to(param))
-		    end),
-     }
-  )
-
--- minetest.register_chatcommand('wp_push', {
-	-- params = '<position/player>',
-	-- description = 'teleport to a position/player and save old position',
-	-- func = safe(function(param)
-		       -- stack_push()
-		       -- minetest.run_server_chatcommand('teleport', param)
-		    -- end),
-      -- }
-   -- )
-
-minetest.register_chatcommand('tp_pop', {
-	params = '',
-	description = 'return to the last saved position',
-	func = stack_pop,
-     }
-  )
-
--- minetest.register_chatcommand('wp_pop', {
-	-- params = '',
-	-- description = 'return to the last saved position',
-	-- func = stack_pop,
-     -- }
-  -- )
-
--- minetest.register_chatcommand('tw_use', {
-	-- params = '',
-	-- description = "use the last saved position but don't remove it",
-	-- func = stack_use,
-     -- }
-  -- )
-
-minetest.register_chatcommand('wp_use', {
-	params = '',
-	description = "use the last saved position but don't remove it",
-	func = stack_use,
-     }
-  )
-
--- minetest.register_chatcommand('tw_exch', {
-	-- params = '',
-	-- description = 'exchange the top two stack entried',
-	-- func = stack_exch,
-     -- }
-  -- )
-
-minetest.register_chatcommand('wp_exch', {
-	params = '',
-	description = 'exchange the top two stack entried',
-	func = stack_exch,
-     }
-  )
-minetest.register_chatcommand('wp_stack', {
-	params = '',
-	description = 'shows the stack content',
-	func = stack_show,
-     }
-  )
-
-minetest.register_chatcommand('wp_stack_clear', {
-	params = '',
-	description = 'clears the position stack',
-	func = stack_clear,
-     }
-  )
-
-
-minetest.register_chatcommand('wp_search', {
-	params = '(<delta>)',
-	description = 'search a waypoint near the current position',
-	func = stack_search,
-     }
-  )
-
-
-minetest.register_chatcommand('tp_shift', {
-	params = '<axis> <distance>',
-	description = '"shift" the player along the given axis and add the given number',
-	func = position_shift2,
-     }
-  )
-
 
 minetest.register_chatcommand('wp_dist', {
 	params = '<waypoint>',
@@ -470,25 +423,13 @@ minetest.register_chatcommand('wp_dist', {
 	func = calc_distance,
      }
   )
-        
 
-minetest.register_chatcommand('wp_show', {
-	params = '<waypoint>',
-	description = 'show the coordinates of a given waypoint',
-	func = show_pos,
+minetest.register_chatcommand('wp_exch', {
+	params = '',
+	description = 'exchange the top two stack entried',
+	func = stack_exch,
      }
   )
-
-
-minetest.register_chatcommand('tp', {
-	params = '<position/player>',
-	description = 'shortcut for /teleport',
-	func = safe(function(param)
-		       safe(minetest.run_server_chatcommand('teleport',param ))
-		    end),
-     }
-  )
-        
 
 --  wp_grep    written by erstazi (player at Linux-Forks.de )
 minetest.register_chatcommand('wp_grep', {
@@ -512,3 +453,64 @@ minetest.register_chatcommand('wp_grep', {
     end),
 })
 
+minetest.register_chatcommand('wp_search', {
+	params = '(<delta>)',
+	description = 'search a waypoint near the current position',
+	func = stack_search,
+     }
+  )
+
+minetest.register_chatcommand('wp_stack', {
+	params = '',
+	description = 'shows the stack content',
+	func = stack_show,
+     }
+  )
+
+minetest.register_chatcommand('wp_stack_clear', {
+	params = '',
+	description = 'clears the position stack',
+	func = stack_clear,
+     }
+  )
+
+
+
+
+
+
+
+-- minetest.register_chatcommand('wp_push', {
+	-- params = '<position/player>',
+	-- description = 'teleport to a position/player and save old position',
+	-- func = safe(function(param)
+		       -- stack_push()
+		       -- minetest.run_server_chatcommand('teleport', param)
+		    -- end),
+      -- }
+   -- )
+
+
+
+-- minetest.register_chatcommand('wp_pop', {
+	-- params = '',
+	-- description = 'return to the last saved position',
+	-- func = stack_pop,
+     -- }
+  -- )
+
+
+
+-- minetest.register_chatcommand('wp_use', {
+	-- params = '',
+	-- description = "use the last saved position but don't remove it",
+	-- func = stack_use,
+     -- }
+  -- )
+
+-- minetest.register_chatcommand('tw_exch', {
+	-- params = '',
+	-- description = 'exchange the top two stack entried',
+	-- func = stack_exch,
+     -- }
+  -- )

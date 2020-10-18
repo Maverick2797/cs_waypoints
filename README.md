@@ -24,24 +24,22 @@ load_mod_cs_waypoints = true
 usage
 -----
 
-* .wp_set NAME: set a waypoint at your current location
-* .wp_unset NAME: remove a waypoint
 * .wp_list: list all waypoints
-* .tw NAME: teleport to a waypoint
+* .wp_set NAME: set a waypoint at your current location
+* .wp_show NAME: shows the coords of NAME
+* .wp_unset NAME: remove a waypoint
 
-* .tw_push NAME: teleport to a waypoint and save current location
-* .wp_push PLAYER/POSITION: teleport to a player or position and save current location
+* .tp_pop: return to the last saved location
+* .tp_push NAME: teleport to a waypoint and save current location
+* .tp_shift AXIS DISTANCE: moves you on the given axis the given distance
+* .tp_to NAME: teleport to a waypoint
+* .tp_use NAME: like tp_pop, but doesn't remove the saved location from the stack
 
-* .tw_pop; return to the last saved location
-* .wp_pop: return to the last saved location
 
-* .wp_stack: shows the locations in the stack
-
-* .wp_stack_clear: clears the stack
-
+* .wp_dist NAME: shows the distance to NAME
+* .wp_exch NAME1 NAME2: swaps the saved positions of the named waypoints
+* .wp_grep NAME:  search for NAME in the waypoint names
 * .wp_search DELTA: searches for saved waypoints near te current location with the given delta for all coordinates
 * .wp_search: searches for saved waypoints near te current location with DELTA=10
-    
-* .wp_shift AXIS DISTANCE: moves you on the given axis the given distance
-
-* .wp_grep NAME:  search for NAME in the waypoint names
+* .wp_stack: shows the locations in the stack
+* .wp_stack_clear: clears the stack
