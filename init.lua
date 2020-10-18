@@ -1,19 +1,16 @@
-
-
-
-
 local mod_name = minetest.get_current_modname()
-
-local mod_version = "2.5"
+local mod_version = "2.6"
+local address = minetest.get_server_info().address
+local msg_prefix = minetest.colorize("orange", "[CS_Waypoints]").." "
 
 local function log(level, message)
     minetest.log(level, ('[%s] %s'):format(mod_name, message))
 end
 
-log('action', 'CSM cs_waypoints '..mod_version..' loading...')
+log('action', 'CSM cs_waypoints v'..mod_version..' loading...')
 
-minetest.display_chat_message("CSM cs_waypoints '..mod_version..' loading...")
-
+minetest.display_chat_message(msg_prefix.."CSM cs_waypoints v"..mod_version.." loading...")
+minetest.display_chat_message(msg_prefix.."Using waypoint list: "..address)
 local mod_storage = minetest.get_mod_storage()
 
 
@@ -26,19 +23,19 @@ local search_delta_default = 10
 --
 
 local function load_waypoints()
-    if string.find(mod_storage:get_string('waypoints'), 'return') then
-        return minetest.deserialize(mod_storage:get_string('waypoints'))
+    if string.find(mod_storage:get_string(address..'_waypoints'), 'return') then
+        return minetest.deserialize(mod_storage:get_string(address..'_waypoints'))
     else
         return {}
     end
 end
 
 local function load_waypoints_stack()
-    if string.find(mod_storage:get_string('waypoints_stack'), 'return nil') then
+    if string.find(mod_storage:get_string(address..'_waypoints_stack'), 'return nil') then
        return {}
     end
-    if string.find(mod_storage:get_string('waypoints_stack'), 'return') then
-        return minetest.deserialize(mod_storage:get_string('waypoints_stack'))
+    if string.find(mod_storage:get_string(address..'_waypoints_stack'), 'return') then
+        return minetest.deserialize(mod_storage:get_string(address..'_waypoints_stack'))
     else
         return {}
     end
@@ -103,7 +100,7 @@ local function teleport_to(position_name)
    if waypoint ~= nil then
       minetest.run_server_chatcommand('teleport', tostring_point(waypoint))
    else
-      minetest.display_chat_message(('waypoint "%s" not found.'):format(wpname))
+      minetest.display_chat_message(msg_prefix..('waypoint "%s" not found.'):format(wpname))
    end
    return true
 end
@@ -127,7 +124,7 @@ local function stack_push()
    wp_stack = load_waypoints_stack()
    count = #wp_stack +1
    wp_stack[count] = point
-   mod_storage:set_string('waypoints_stack', minetest.serialize(wp_stack))
+   mod_storage:set_string(address..'_waypoints_stack', minetest.serialize(wp_stack))
 end
 
 local function stack_pop()
@@ -135,12 +132,12 @@ local function stack_pop()
    count = 0
    if nil ~= wp_stack then count = #wp_stack end
    if count<1 then
-      minetest.display_chat_message('stack empty - no teleporting')
+      minetest.display_chat_message(msg_prefix..'stack empty - no teleporting')
       return
    end
    minetest.run_server_chatcommand('teleport', tostring_point(wp_stack[count]))
    wp_stack[count] = nil
-   mod_storage:set_string('waypoints_stack', minetest.serialize(wp_stack))
+   mod_storage:set_string(address..'_waypoints_stack', minetest.serialize(wp_stack))
    return true   
 end
 
@@ -149,7 +146,7 @@ local function stack_use()
    count = 0
    if nil ~= wp_stack then count = #wp_stack end
    if count<1 then
-      minetest.display_chat_message('stack empty - no teleporting')
+      minetest.display_chat_message(msg_prefix..'stack empty - no teleporting')
       return
    end
    minetest.run_server_chatcommand('teleport', tostring_point(wp_stack[count]))
@@ -161,13 +158,13 @@ local function stack_exch()
    count = 0
    if nil ~= wp_stack then count = #wp_stack end
    if count<2 then
-      minetest.display_chat_message('less than 2 entries - no change')
+      minetest.display_chat_message(msg_prefix..'less than 2 entries - no change')
       return
    end
    local exch        = wp_stack[count]
    wp_stack[count]   = wp_stack[count-1]
    wp_stack[count-1] = exch
-   mod_storage:set_string('waypoints_stack', minetest.serialize(wp_stack))
+   mod_storage:set_string(address..'_waypoints_stack', minetest.serialize(wp_stack))
    return true   
 end
 
@@ -177,7 +174,7 @@ local function stack_show()
    count = 0
    if nil ~= wp_stack then count = #wp_stack end
    if count<1 then
-      minetest.display_chat_message('stack empty')
+      minetest.display_chat_message(msg_prefix..'stack empty')
       return true
    end
    output = ""
@@ -188,7 +185,7 @@ local function stack_show()
 end
 
 local function stack_clear()
-   mod_storage:set_string('waypoints_stack', minetest.serialize(nil))
+   mod_storage:set_string(address..'_waypoints_stack', minetest.serialize(nil))
 end
 
 local function  stack_search(d)   
@@ -198,14 +195,14 @@ local function  stack_search(d)
    if delta < 0 then delta = 0 end
    
    here = minetest.localplayer:get_pos()
-   minetest.display_chat_message(
+   minetest.display_chat_message(msg_prefix..
                 ('%s : %s'):format("current position", tostring_point(here))
             )
    for name,pos in pairsByKeys(waypoints, lc_cmp) do
       if math.abs(here.y-pos.y) <= delta then
 	 if math.abs(here.x-pos.x) <= delta then
 	    if math.abs(here.z-pos.z) <= delta then
-	       minetest.display_chat_message(
+	       minetest.display_chat_message(msg_prefix..
 		     ('%s -> %s'):format(name, tostring_point(pos)))
 	    end
 	 end
@@ -328,9 +325,9 @@ minetest.register_chatcommand('wp_set', {
         waypoints = load_waypoints()
         local point = minetest.localplayer:get_pos()
         waypoints[param] = point
-        mod_storage:set_string('waypoints', minetest.serialize(waypoints))
+        mod_storage:set_string(address..'_waypoints', minetest.serialize(waypoints))
 
-        minetest.display_chat_message(
+        minetest.display_chat_message(msg_prefix..
             ('set waypoint "%s" to "%s"'):format(param, tostring_point(point))
         )
     end),
@@ -343,9 +340,9 @@ minetest.register_chatcommand('wp_unset', {
     func = safe(function(param)
         waypoints = load_waypoints()
         waypoints[param] = nil
-        mod_storage:set_string('waypoints', minetest.serialize(waypoints))
+        mod_storage:set_string(address..'_waypoints', minetest.serialize(waypoints))
 
-        minetest.display_chat_message(
+        minetest.display_chat_message(msg_prefix..
             ('removed waypoint "%s"'):format(param)
         )
     end),
@@ -357,7 +354,7 @@ minetest.register_chatcommand('wp_list', {
     description = 'lists waypoints',
     func = safe(function(_)
         for name, point in pairsByKeys(waypoints, lc_cmp) do
-            minetest.display_chat_message(
+            minetest.display_chat_message(msg_prefix..
                 ('%s -> %s'):format(name, tostring_point(point))
             )
         end
@@ -503,14 +500,14 @@ minetest.register_chatcommand('wp_grep', {
         for name, point in pairsByKeys(waypoints, lc_cmp) do
             if string.find(name, wpname) then
                 count = count + 1
-                minetest.display_chat_message(
+                minetest.display_chat_message(msg_prefix..
                     ('%s -> %s'):format(name, tostring_point(point))
                 )
             end
         end
 
         if count == 0 then
-            minetest.display_chat_message(('waypoint "%s" not found.'):format(wpname))
+            minetest.display_chat_message(msg_prefix..('waypoint "%s" not found.'):format(wpname))
         end
     end),
 })
