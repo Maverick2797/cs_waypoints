@@ -362,7 +362,7 @@ minetest.register_chatcommand('wp_list', {
 })
 
 
-minetest.register_chatcommand('tw', {
+minetest.register_chatcommand('tp_to', {
 	params = '<waypoint>',
 	description = 'teleport to a waypoint',
 	func = safe(function(param)
@@ -372,7 +372,7 @@ minetest.register_chatcommand('tw', {
   )
 
 
-minetest.register_chatcommand('tw_push', {
+minetest.register_chatcommand('tp_push', {
 	params = '<waypoint>',
 	description = 'teleport to a waypoint and save old position',
 	func = safe(function(param)
@@ -382,36 +382,36 @@ minetest.register_chatcommand('tw_push', {
      }
   )
 
-minetest.register_chatcommand('wp_push', {
-	params = '<position/player>',
-	description = 'teleport to a position/player and save old position',
-	func = safe(function(param)
-		       stack_push()
-		       minetest.run_server_chatcommand('teleport', param)
-		    end),
-      }
-   )
+-- minetest.register_chatcommand('wp_push', {
+	-- params = '<position/player>',
+	-- description = 'teleport to a position/player and save old position',
+	-- func = safe(function(param)
+		       -- stack_push()
+		       -- minetest.run_server_chatcommand('teleport', param)
+		    -- end),
+      -- }
+   -- )
 
-minetest.register_chatcommand('tw_pop', {
+minetest.register_chatcommand('tp_pop', {
 	params = '',
 	description = 'return to the last saved position',
 	func = stack_pop,
      }
   )
 
-minetest.register_chatcommand('wp_pop', {
-	params = '',
-	description = 'return to the last saved position',
-	func = stack_pop,
-     }
-  )
+-- minetest.register_chatcommand('wp_pop', {
+	-- params = '',
+	-- description = 'return to the last saved position',
+	-- func = stack_pop,
+     -- }
+  -- )
 
-minetest.register_chatcommand('tw_use', {
-	params = '',
-	description = "use the last saved position but don't remove it",
-	func = stack_use,
-     }
-  )
+-- minetest.register_chatcommand('tw_use', {
+	-- params = '',
+	-- description = "use the last saved position but don't remove it",
+	-- func = stack_use,
+     -- }
+  -- )
 
 minetest.register_chatcommand('wp_use', {
 	params = '',
@@ -420,12 +420,12 @@ minetest.register_chatcommand('wp_use', {
      }
   )
 
-minetest.register_chatcommand('tw_exch', {
-	params = '',
-	description = 'exchange the top two stack entried',
-	func = stack_exch,
-     }
-  )
+-- minetest.register_chatcommand('tw_exch', {
+	-- params = '',
+	-- description = 'exchange the top two stack entried',
+	-- func = stack_exch,
+     -- }
+  -- )
 
 minetest.register_chatcommand('wp_exch', {
 	params = '',
@@ -456,7 +456,7 @@ minetest.register_chatcommand('wp_search', {
   )
 
 
-minetest.register_chatcommand('wp_shift', {
+minetest.register_chatcommand('tp_shift', {
 	params = '<axis> <distance>',
 	description = '"shift" the player along the given axis and add the given number',
 	func = position_shift2,
